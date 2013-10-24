@@ -1,7 +1,7 @@
 j-rql-connector-https
 =====================
 
-An all version compatible RQL connector written in JavaScript/JQuery
+An all version compatible RQL connector written in JavaScript/JQuery.  This flavor works in both HTTP and HTTPS.
 
 Usage
 =====
