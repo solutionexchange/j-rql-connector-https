@@ -12,7 +12,11 @@
 
 	Set objIO = Nothing
 	
-	retXml = "<RQL>" & xmlData & "<ERROR>" & sError & "</ERROR>" & "</RQL>"
+	If xmlData = "" Then
+        retXml = "<ERRORTEXT>" & sError & "</ERRORTEXT>"
+	Else
+        retXml = xmlData
+	End If
 	
 	Response.Write(retXml)
 %>

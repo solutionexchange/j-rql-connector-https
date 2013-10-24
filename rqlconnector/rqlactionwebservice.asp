@@ -1,6 +1,6 @@
 <%
 	Dim WebService11Url
-	WebService11Url = "http://localhost" + Request.Form("webserviceurl")
+	WebService11Url = "http://" & Request.ServerVariables("SERVER_NAME") & Request.Form("webserviceurl")
 	
 	Dim xmlData
 	xmlData = Request.Form("rqlxml")
