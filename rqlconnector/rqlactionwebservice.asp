@@ -1,4 +1,6 @@
 <%
+	Response.ContentType = "text/xml"
+	
 	Dim WebService11Url
 	WebService11Url = "http://" & Request.ServerVariables("SERVER_NAME") & Request.Form("webserviceurl")
 	
