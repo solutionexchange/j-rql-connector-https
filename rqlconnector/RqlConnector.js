@@ -4,7 +4,7 @@ function RqlConnector(LoginGuid, SessionKey) {
   this.DCOM = 'DCOM';
   this.DCOMProxyUrl = 'rqlconnector/rqlaction.asp';
   this.WebService11 = 'WebService11';
-  this.WebService11ProxyUrl = 'rqlconnector/rqlactionwebservice.asp';
+  this.WebService11ProxyUrl = 'rqlconnector/rqlactionwebservice.aspx';
   this.WebService11Url = '/CMS/WebService/RqlWebService.svc';
   this.RqlConnectionType = '';
   this.InitializeConnectionType();
