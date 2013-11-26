@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" validateRequest="false" %>
+﻿<%@ Page Language="C#" validateRequest="false" Debug="true" %>
 <%@ Import Namespace="System" %>
 <%@ Import Namespace="System.Net" %>
 <%@ Import Namespace="System.Xml" %>
@@ -42,8 +42,14 @@
         PostData += "<s:Body><q1:Execute xmlns:q1=\"http://tempuri.org/RDCMSXMLServer/message/\"><sParamA>" + XmlEscape(Rql) + "</sParamA><sErrorA></sErrorA><sResultInfoA></sResultInfoA></q1:Execute></s:Body>";
         PostData += "</s:Envelope>";
         */
-
-        Response = oWC.UploadString(WebServiceUrl, Rql);
+		try
+		{
+			Response = oWC.UploadString(WebServiceUrl, Rql);
+		}
+		catch
+		{
+			Response = "";
+		}
 
         return Response;
     }
@@ -52,14 +58,12 @@
     {
         if (HttpContext.Current.Session["WebServiceUrl"] == null)
         {
-            HttpContext.Current.Session["WebServiceUrl"] = HttpContext.Current.Request.Url.Scheme + ":" + "//10.25.0.52/cms/WebService/RqlWebService.svc";
+            HttpContext.Current.Session["WebServiceUrl"] = HttpContext.Current.Request.Url.Scheme + ":" + "//" + HttpContext.Current.Request.Url.Authority + "/cms/WebService/RqlWebService.svc";
             Uri WebServiceUri = new Uri(HttpContext.Current.Session["WebServiceUrl"].ToString());
 
-            try
-            {
-                SendRqlToWebService(WebServiceUri.ToString(), "");
-            }
-            catch
+            string Response = SendRqlToWebService(WebServiceUri.ToString(), "");
+
+			if(Response == "")
             {
                 if (WebServiceUri.Scheme == "https")
                 {
