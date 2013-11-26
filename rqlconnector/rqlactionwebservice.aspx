@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" validateRequest="false" Debug="true" %>
+﻿<%@ Page Language="C#" validateRequest="false" Debug="false" %>
 <%@ Import Namespace="System" %>
 <%@ Import Namespace="System.Net" %>
 <%@ Import Namespace="System.Xml" %>
