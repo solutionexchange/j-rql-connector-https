@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" validateRequest="false" Debug="false" %>
+﻿<%@ Page Language="C#" validateRequest="false" Debug="true" %>
 <%@ Import Namespace="System" %>
 <%@ Import Namespace="System.Net" %>
 <%@ Import Namespace="System.Xml" %>
@@ -36,12 +36,7 @@
         WebClient oWC = new WebClient();
         oWC.Headers.Add("Content-Type", "text/xml; charset=utf-8");
         oWC.Headers.Add("SOAPAction", "http://tempuri.org/RDCMSXMLServer/action/XmlServer.Execute");
-        /*
-        string PostData = "";
-        PostData += "<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\">";
-        PostData += "<s:Body><q1:Execute xmlns:q1=\"http://tempuri.org/RDCMSXMLServer/message/\"><sParamA>" + XmlEscape(Rql) + "</sParamA><sErrorA></sErrorA><sResultInfoA></sResultInfoA></q1:Execute></s:Body>";
-        PostData += "</s:Envelope>";
-        */
+
 		try
 		{
 			Response = oWC.UploadString(WebServiceUrl, Rql);
@@ -61,7 +56,12 @@
             HttpContext.Current.Session["WebServiceUrl"] = HttpContext.Current.Request.Url.Scheme + ":" + "//" + HttpContext.Current.Request.Url.Authority + "/cms/WebService/RqlWebService.svc";
             Uri WebServiceUri = new Uri(HttpContext.Current.Session["WebServiceUrl"].ToString());
 
-            string Response = SendRqlToWebService(WebServiceUri.ToString(), "");
+			string Rql = "";
+			Rql += "<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\">";
+			Rql += "<s:Body><q1:Execute xmlns:q1=\"http://tempuri.org/RDCMSXMLServer/message/\"><sParamA></sParamA><sErrorA></sErrorA><sResultInfoA></sResultInfoA></q1:Execute></s:Body>";
+			Rql += "</s:Envelope>";
+			
+            string Response = SendRqlToWebService(WebServiceUri.ToString(), Rql);
 
 			if(Response == "")
             {
