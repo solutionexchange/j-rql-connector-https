@@ -73,9 +73,16 @@ RqlConnector.prototype.SendRqlWebService = function(InnerRQL, IsText, CallbackFu
 RqlConnector.prototype.SendRqlCOM = function(InnerRQL, IsText, CallbackFunc)
 {
 	var Rql = this.padRQLXML(InnerRQL, IsText);
-	$.post(this.DCOMProxyUrl, { rqlxml: Rql },
-	function(data){
-		data = $('<div/>').append(data);
+	$.post(this.DCOMProxyUrl, { rqlxml: Rql }, function(data){
+		if(IsText)
+		{
+			// do nothing
+		}
+		else
+		{
+			data = $('<div/>').append(data);
+		}
+
 		CallbackFunc(data);
 	});
 }
