@@ -63,9 +63,19 @@ RqlConnector.prototype.SendRqlWebService = function(InnerRQL, IsText, CallbackFu
 		}
 		else
 		{
-			data = $.parseXML( $.trim(RetRql) );
+			var XmlDom = $.parseXML($.trim(RetRql));
+			
+			//IE
+			if (window.ActiveXObject){
+				data = XmlDom.xml;
+			}
+			// code for Mozilla, Firefox, Opera, etc.
+			else
+			{
+				data = (new XMLSerializer()).serializeToString(XmlDom);
+			}
 		}
-
+			
 		CallbackFunc(data);
 	});
 }
