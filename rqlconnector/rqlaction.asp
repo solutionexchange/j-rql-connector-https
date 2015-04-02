@@ -1,5 +1,7 @@
 <%
 	'Response.ContentType = "text/xml"
+	Session.Timeout = 180
+	Server.ScriptTimeout = 180
 
 	Dim objIO	'Declare the objects
 	Dim xmlData, sError, retXml
