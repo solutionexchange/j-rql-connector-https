@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Testing</title>
+    <script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+</head>
+<body>
+	<script type="text/javascript">
+		$.get('serverside/asp.asp', function(data){
+			var PageLength = $(data).find('PAGE').length;
+			console.log('ASP: ' + PageLength);
+		});
+		
+		$.get('serverside/aspx.aspx', function(data){
+			var RetRql = $(data).find('Result').text();
+			var PageLength = $($.parseXML(RetRql)).find('PAGE').length;
+			console.log('ASPX: ' + PageLength);
+		});
+    </script>
+</body>
+</html>
