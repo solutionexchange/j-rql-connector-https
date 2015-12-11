@@ -1,5 +1,5 @@
 <%
-	Response.ContentType = "text/plain"
+	Response.ContentType = "text/xml; charset=utf-8";
 
     Session.Timeout = 180
 	Server.ScriptTimeout = 180

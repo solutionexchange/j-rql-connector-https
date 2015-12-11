@@ -67,7 +67,7 @@ RqlConnector.prototype.SendRqlCOM = function (InnerRQL, IsText, CallbackFunc) {
             // do nothing
         }
         else {
-            data = $.parseXML($.trim(data));
+            data = $($.trim(data));
         }
 
         CallbackFunc(data);
