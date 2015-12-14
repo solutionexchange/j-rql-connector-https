@@ -4,7 +4,7 @@ public class RqlWebServiceConnector
 {
     public string SendRql(string Rql)
     {
-    	HttpContext.Current.Response.ContentType = "text/xml; charset=utf-8";
+    	HttpContext.Current.Response.ContentType = "text/plain; charset=utf-8";
         return SendRqlToWebService(Rql);
     }
 

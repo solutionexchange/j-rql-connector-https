@@ -45,33 +45,39 @@ RqlConnector.prototype.SendRqlWebService = function (InnerRQL, IsText, CallbackF
     SOAPMessage += '<s:Body><q1:Execute xmlns:q1="http://tempuri.org/RDCMSXMLServer/message/"><sParamA>' + this.padRQLXML(InnerRQL, IsText) + '</sParamA><sErrorA></sErrorA><sResultInfoA></sResultInfoA></q1:Execute></s:Body>';
     SOAPMessage += '</s:Envelope>';
 
-    $.post(this.WebService11ProxyUrl, {rqlxml: SOAPMessage, webserviceurl: this.WebService11Url},
-        function (data) {
-            var RetRql = $(data).find('Result').text();
+    $.post(this.WebService11ProxyUrl, {rqlxml: SOAPMessage, webserviceurl: this.WebService11Url}, function (data) {
+        data = $.trim(data);
 
-            if (IsText) {
-                data = RetRql;
-            }
-            else {
-                data = $.parseXML($.trim(RetRql));
-            }
+        var RetRql = $($.parseXML(data)).find('Result').text();
+        RetRql = $.tr(RetRql);
 
-            CallbackFunc(data);
-        });
+        if (IsText) {
+            data = RetRql;
+        }
+        else {
+
+            data = $.parseXML(RetRql);
+        }
+
+        CallbackFunc(data);
+    }, 'text');
 }
 
 RqlConnector.prototype.SendRqlCOM = function (InnerRQL, IsText, CallbackFunc) {
     var Rql = this.padRQLXML(InnerRQL, IsText);
     $.post(this.DCOMProxyUrl, {rqlxml: Rql}, function (data) {
+        data = $.trim(data);
+
         if (IsText) {
             // do nothing
         }
         else {
-            data = $($.trim(data));
+
+            data = $.parseXML(data);
         }
 
         CallbackFunc(data);
-    });
+    }, 'text');
 }
 
 RqlConnector.prototype.padRQLXML = function (InnerRQL, IsText) {
