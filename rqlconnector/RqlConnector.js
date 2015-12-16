@@ -49,7 +49,7 @@ RqlConnector.prototype.SendRqlWebService = function (InnerRQL, IsText, CallbackF
         data = $.trim(data);
 
         var RetRql = $($.parseXML(data)).find('Result').text();
-        RetRql = $.tr(RetRql);
+        RetRql = $.trim(RetRql);
 
         if (IsText) {
             data = RetRql;
