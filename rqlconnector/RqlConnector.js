@@ -7,42 +7,55 @@ function RqlConnector(LoginGuid, SessionKey) {
     this.WebService11ProxyUrl = 'rqlconnector/rqlactionwebservice.aspx';
     this.WebService11Url = '/CMS/WebService/RqlWebService.svc';
     this.RqlConnectionType = '';
-    this.InitializeConnectionType();
 }
 
 RqlConnector.prototype.SetConnectionType = function (ConnectionType) {
     this.RqlConnectionType = ConnectionType;
 }
 
-RqlConnector.prototype.GetConnectionType = function () {
-    return this.RqlConnectionType;
-}
+RqlConnector.prototype.GetConnectionType = function (CallbackFunc) {
+    var ThisClass = this;
 
-RqlConnector.prototype.InitializeConnectionType = function () {
-    if (this.GetConnectionType() == '') {
-        if (this.TestConnection(this.WebService11Url)) {
-            this.SetConnectionType(this.WebService11);
-        } else {
-            this.SetConnectionType(this.DCOM);
+    if (this.RqlConnectionType == '') {
+        this.TestConnection(this.WebService11Url, function(data) {
+            if (data) {
+                ThisClass.SetConnectionType(ThisClass.WebService11);
+            } else {
+                ThisClass.SetConnectionType(ThisClass.DCOM);
+            }
+
+            if (CallbackFunc) {
+                CallbackFunc(ThisClass.RqlConnectionType);
+            }
+        });
+    } else {
+        if (CallbackFunc) {
+            CallbackFunc(ThisClass.RqlConnectionType);
         }
     }
 }
 
 RqlConnector.prototype.SendRql = function (InnerRQL, IsText, CallbackFunc) {
-    switch (this.GetConnectionType()) {
-        case this.DCOM:
-            this.SendRqlCOM(InnerRQL, IsText, CallbackFunc);
-            break;
-        case this.WebService11:
-            this.SendRqlWebService(InnerRQL, IsText, CallbackFunc);
-            break;
-    }
+    var ThisClass = this;
+
+    this.GetConnectionType(function(data) {
+        switch (data) {
+            case ThisClass.DCOM:
+                ThisClass.SendRqlCOM(InnerRQL, IsText, CallbackFunc);
+                break;
+            case ThisClass.WebService11:
+                ThisClass.SendRqlWebService(InnerRQL, IsText, CallbackFunc);
+                break;
+        }
+    });
 }
 
 RqlConnector.prototype.SendRqlWebService = function (InnerRQL, IsText, CallbackFunc) {
     var SOAPMessage = '';
     SOAPMessage += '<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">';
-    SOAPMessage += '<s:Body><q1:Execute xmlns:q1="http://tempuri.org/RDCMSXMLServer/message/"><sParamA>' + this.padRQLXML(InnerRQL, IsText) + '</sParamA><sErrorA></sErrorA><sResultInfoA></sResultInfoA></q1:Execute></s:Body>';
+    SOAPMessage += '<s:Body><q1:Execute xmlns:q1="http://tempuri.org/RDCMSXMLServer/message/"><sParamA>';
+    SOAPMessage += '<![CDATA[' + this.PadRQLXML(InnerRQL, IsText) + ']]>';
+    SOAPMessage += '</sParamA><sErrorA></sErrorA><sResultInfoA></sResultInfoA></q1:Execute></s:Body>';
     SOAPMessage += '</s:Envelope>';
 
     $.post(this.WebService11ProxyUrl, {rqlxml: SOAPMessage, webserviceurl: this.WebService11Url}, function (data) {
@@ -55,7 +68,6 @@ RqlConnector.prototype.SendRqlWebService = function (InnerRQL, IsText, CallbackF
             data = RetRql;
         }
         else {
-
             data = $.parseXML(RetRql);
         }
 
@@ -64,7 +76,7 @@ RqlConnector.prototype.SendRqlWebService = function (InnerRQL, IsText, CallbackF
 }
 
 RqlConnector.prototype.SendRqlCOM = function (InnerRQL, IsText, CallbackFunc) {
-    var Rql = this.padRQLXML(InnerRQL, IsText);
+    var Rql = this.PadRQLXML(InnerRQL, IsText);
     $.post(this.DCOMProxyUrl, {rqlxml: Rql}, function (data) {
         data = $.trim(data);
 
@@ -72,7 +84,6 @@ RqlConnector.prototype.SendRqlCOM = function (InnerRQL, IsText, CallbackFunc) {
             // do nothing
         }
         else {
-
             data = $.parseXML(data);
         }
 
@@ -80,33 +91,32 @@ RqlConnector.prototype.SendRqlCOM = function (InnerRQL, IsText, CallbackFunc) {
     }, 'text');
 }
 
-RqlConnector.prototype.padRQLXML = function (InnerRQL, IsText) {
-    var Rql = '<IODATA loginguid="' + this.LoginGuid + '" sessionkey="' + this.SessionKey + '"';
+RqlConnector.prototype.PadRQLXML = function (InnerRQL, IsText) {
+    var Rql = '<IODATA loginguid="' + this.LoginGuid + '" sessionkey="' + this.SessionKey + '">';
+
     if (IsText) {
-        Rql += ' format="1"';
+        Rql = '<IODATA loginguid="' + this.LoginGuid + '" sessionkey="' + this.SessionKey + '" format="1">';
     }
 
-    Rql += '>' + InnerRQL + '</IODATA>';
-
-    if (this.GetConnectionType(this.WebService11) == this.WebService11) {
-        Rql = '<![CDATA[' + Rql + ']]>';
-    }
+    Rql += InnerRQL;
+    Rql += '</IODATA>';
 
     return Rql;
 }
 
-RqlConnector.prototype.TestConnection = function (Url) {
-    var Isvalid = false;
+RqlConnector.prototype.TestConnection = function (Url, CallbackFunc) {
     $.ajax({
-        async: false,
+        async: true,
         url: Url,
         success: function () {
-            Isvalid = true;
+            if (CallbackFunc) {
+                CallbackFunc(true);
+            }
         },
         error: function () {
-            Isvalid = false;
+            if (CallbackFunc) {
+                CallbackFunc(false);
+            }
         }
     });
-
-    return Isvalid;
 }
