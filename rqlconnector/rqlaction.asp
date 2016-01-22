@@ -20,6 +20,8 @@
 
 	If xmlData = "" Then
 		retXml = "<ERRORTEXT>" & sError & "</ERRORTEXT>"
+	ElseIf xmlData = "<IODATA>ERROR</IODATA>" Then
+		retXml = "<ERRORTEXT>" & sError & "</ERRORTEXT>"
 	Else
 		retXml = xmlData
 	End If
