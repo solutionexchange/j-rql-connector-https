@@ -1,7 +1,7 @@
 <%
 	Response.ContentType = "text/plain; charset=utf-8"
 
-    Session.Timeout = 180
+	Session.Timeout = 180
 	Server.ScriptTimeout = 180
 
 	Dim objIO	'Declare the objects
